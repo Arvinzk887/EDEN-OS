@@ -1,5 +1,6 @@
 #include "vga.h"
 #include "keyboard.h"
+#include "shell.h"
 
 void kernel_main(void) {
     vga_clear();
@@ -7,13 +8,9 @@ void kernel_main(void) {
     vga_println("-----------------------------------");
     vga_println("Console online.");
     vga_println("Keyboard online.");
-    vga_println("");
-    vga_println("Type keys:");
 
     keyboard_init();
+    shell_run();
 
-    while (1) {
-        char c = keyboard_getchar();
-        vga_putc(c);
-    }
+    while (1) {}
 }

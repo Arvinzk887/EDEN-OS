@@ -53,6 +53,21 @@ void vga_putc(char ch) {
         return;
     }
 
+    if (ch == '\b') {
+        // move cursor left one cell (if possible)
+        if (cursor_col > 0) {
+            cursor_col--;
+        } else if (cursor_row > 0) {
+            cursor_row--;
+            cursor_col = VGA_W - 1;
+        } else {
+            return;
+        }
+
+        // do not erase here; caller may overwrite with space
+        return;
+    }
+
     VGA[cursor_row * VGA_W + cursor_col] = vga_entry(ch, vga_color);
 
     cursor_col++;
