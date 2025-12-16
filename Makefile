@@ -14,8 +14,8 @@ kernel.o:
 vga.o:
 	$(CC) $(CFLAGS) -c kernel/vga.c -o vga.o
 
-eden.bin: boot.o kernel.o vga.o
-	$(CC) $(LDFLAGS) boot.o kernel.o vga.o -o eden.bin
+eden.bin: boot.o kernel.o vga.o keyboard.o
+	$(CC) $(LDFLAGS) boot.o kernel.o vga.o keyboard.o -o eden.bin
 
 eden.iso: eden.bin grub.cfg
 	mkdir -p iso/boot/grub
@@ -28,3 +28,10 @@ run:
 
 clean:
 	rm -rf *.o eden.bin iso eden.iso
+
+io.o:
+	$(CC) $(CFLAGS) -c kernel/io.h -o io.o
+
+keyboard.o:
+	$(CC) $(CFLAGS) -c kernel/keyboard.c -o keyboard.o
+
