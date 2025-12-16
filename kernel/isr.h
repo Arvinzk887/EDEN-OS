@@ -8,5 +8,5 @@ typedef struct regs {
     uint32_t eip, cs, eflags, useresp, ss;
 } regs_t;
 
-void isr_handler(regs_t* r);
-void irq_handler(regs_t* r);
+uint32_t isr_handler(regs_t* r);
+uint32_t irq_handler(regs_t* r);

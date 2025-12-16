@@ -45,7 +45,7 @@ irq_common_stub:
     mov ax, ds
     push eax            ; ds (uint32_t)
 
-    mov ax, 0x10        ; kernel data selector
+    mov ax, 0x10
     mov ds, ax
     mov es, ax
     mov fs, ax
@@ -55,12 +55,16 @@ irq_common_stub:
     call irq_handler
     add esp, 4
 
-    pop eax             ; restore ds
+    mov esp, eax        ; <-- IMPORTANT: switch to returned stack frame
+
+    pop eax
     mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
 
     popa
-    add esp, 8          ; int_no + err_code
-    sti
+    add esp, 8
     iretd
 
 ; -------------------------
@@ -115,7 +119,7 @@ isr_common_stub:
 
     xor eax, eax
     mov ax, ds
-    push eax            ; ds (uint32_t)
+    push eax
 
     mov ax, 0x10
     mov ds, ax
@@ -127,10 +131,14 @@ isr_common_stub:
     call isr_handler
     add esp, 4
 
+    mov esp, eax        ; consistent design: handler returns ESP
+
     pop eax
     mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
 
     popa
     add esp, 8
-    sti
     iretd

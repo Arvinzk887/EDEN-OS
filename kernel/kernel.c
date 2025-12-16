@@ -7,17 +7,13 @@
 #include "io.h"
 #include "vga.h"
 #include "pit.h"
+#include "sched.h"
 
-static void kbd_dot_test(void) {
-    vga_println("");
-    vga_println("KBD TEST: press keys, should print dots...");
+extern void bg_task(void);
 
-    while (1) {
-        if (inb(0x64) & 1) {   // keyboard controller has data
-            (void)inb(0x60);  // read scancode
-            vga_putc('.');    // show activity
-        }
-    }
+static void shell_task(void) {
+    keyboard_init();
+    shell_run();
 }
 
 void kernel_main(void) {
@@ -32,16 +28,20 @@ void kernel_main(void) {
 
     idt_init();
 
-    __asm__ volatile ("sti");
+    pit_init(100); // set PIT before enabling interrupts
 
-    pit_init(100); // 100 Hz (10ms ticks). You can use 1000 later if you want.
+    sched_init();
+    task_create(shell_task);   // Task 0: shell
+    task_create(bg_task);      // Task 1: background
+
+    // jump into task 0 (never returns)
+    sched_launch(sched_first_esp());
 
     vga_println("Console online.");
     vga_println("Interrupts online.");
-    vga_println("Keyboard (IRQ1) online.");
+    vga_println("Scheduler online.");
 
-    keyboard_init();
-    shell_run();
+    __asm__ volatile ("sti");  // enable interrupts AFTER tasks exist
 
-    while (1) {}
+    
 }
