@@ -14,8 +14,8 @@ kernel.o:
 vga.o:
 	$(CC) $(CFLAGS) -c kernel/vga.c -o vga.o
 
-eden.bin: boot.o kernel.o vga.o keyboard.o str.o shell.o
-	$(CC) $(LDFLAGS) boot.o kernel.o vga.o keyboard.o str.o shell.o -o eden.bin
+eden.bin: boot.o kernel.o vga.o keyboard.o str.o shell.o gdt.o gdt_asm.o idt.o isr.o pic.o interrupts.o
+	$(CC) $(LDFLAGS) boot.o kernel.o vga.o keyboard.o str.o shell.o gdt.o gdt_asm.o idt.o isr.o pic.o interrupts.o -o eden.bin
 
 eden.iso: eden.bin grub.cfg
 	mkdir -p iso/boot/grub
@@ -40,3 +40,21 @@ str.o:
 
 shell.o:
 	$(CC) $(CFLAGS) -c kernel/shell.c -o shell.o
+
+interrupts.o:
+	$(AS) -f elf32 kernel/interrupts.asm -o interrupts.o
+
+idt.o:
+	$(CC) $(CFLAGS) -c kernel/idt.c -o idt.o
+
+isr.o:
+	$(CC) $(CFLAGS) -c kernel/isr.c -o isr.o
+
+pic.o:
+	$(CC) $(CFLAGS) -c kernel/pic.c -o pic.o
+
+gdt.o:
+	$(CC) $(CFLAGS) -c kernel/gdt.c -o gdt.o
+
+gdt_asm.o:
+	$(AS) -f elf32 kernel/gdt.asm -o gdt_asm.o

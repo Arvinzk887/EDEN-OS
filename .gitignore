@@ -1,6 +1,21 @@
-cat <<EOF > .gitignore
+# build artifacts
 *.o
 *.bin
 *.iso
 iso/
+eden.iso
+eden.bin
+
+# macOS noise
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# editor/IDE
+.vscode/
+.idea/
+*.swp
+
+# misc
+tmp/
 EOF
