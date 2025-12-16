@@ -2,6 +2,7 @@
 #include "pic.h"
 #include "keyboard.h"
 #include "vga.h"
+#include "pit.h"
 
 void isr_handler(regs_t* r) {
     (void)r;
@@ -12,9 +13,11 @@ void isr_handler(regs_t* r) {
 void irq_handler(regs_t* r) {
     int irq = (int)r->int_no - 32;
 
-    if (irq == 1) {
-        keyboard_irq_handler();  // read scancode & buffer it
+    if (irq == 0) {
+        pit_irq_handler();
+    } else if (irq == 1) {
+        keyboard_irq_handler();
     }
 
-    pic_send_eoi(irq);          // send EOI ONCE, at the end
+    pic_send_eoi(irq);
 }

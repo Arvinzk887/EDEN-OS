@@ -3,6 +3,7 @@
 #include "keyboard.h"
 #include "str.h"
 #include "power.h"
+#include "pit.h"
 
 #define LINE_MAX 80
 
@@ -19,6 +20,9 @@ static void exec_cmd(const char* line) {
         vga_println("  clear       - clear screen");
         vga_println("  halt        - halt CPU");
         vga_println("  echo <txt>  - print text");
+        vga_println("  uptime      - show uptime in ms");
+        vga_println("  sleep <ms>  - sleep for ms");
+
         return;
     }
 
@@ -29,12 +33,45 @@ static void exec_cmd(const char* line) {
 
     if (kstreq(line, "halt")) {
         vga_println("Powering off...");
-        poweroff();   // exits QEMU when isa-debug-exit is enabled
+        poweroff();
         return;
-    }    
+    }
+    
+    if (kstartswith(line, "sleep ")) {
+        const char* arg = line + 6;
+    
+        if (*arg == 0) {
+            vga_println("Usage: sleep <ms>");
+            return;
+        }
+    
+        uint32_t ms = katoi(arg);
+        if (ms == 0) {
+            vga_println("Invalid duration");
+            return;
+        }
+    
+        pit_sleep_ms(ms);
+        return;
+    }     
 
     if (kstartswith(line, "echo ")) {
         vga_println(line + 5);
+        return;
+    }
+
+    if (kstreq(line, "uptime")) {
+        vga_print("Uptime: ");
+        vga_print_u64(pit_uptime_ms());
+        vga_println(" ms");
+        return;
+    }
+
+    if (kstartswith(line, "sleep ")) {
+        uint32_t ms = (uint32_t)katoi(line + 6);
+        vga_println("Sleeping...");
+        pit_sleep_ms(ms);
+        vga_println("Done.");
         return;
     }
 

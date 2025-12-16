@@ -6,6 +6,7 @@
 #include "idt.h"
 #include "io.h"
 #include "vga.h"
+#include "pit.h"
 
 static void kbd_dot_test(void) {
     vga_println("");
@@ -32,6 +33,8 @@ void kernel_main(void) {
     idt_init();
 
     __asm__ volatile ("sti");
+
+    pit_init(100); // 100 Hz (10ms ticks). You can use 1000 later if you want.
 
     vga_println("Console online.");
     vga_println("Interrupts online.");

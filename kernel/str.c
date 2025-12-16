@@ -1,4 +1,5 @@
 #include "str.h"
+#include <stdint.h>
 
 size_t kstrlen(const char* s) {
     size_t n = 0;
@@ -22,4 +23,18 @@ int kstartswith(const char* s, const char* prefix) {
         i++;
     }
     return 1;
+}
+
+uint32_t katoi(const char* s) {
+    if (!s) return 0;
+
+    // skip leading spaces/tabs
+    while (*s == ' ' || *s == '\t') s++;
+
+    uint32_t v = 0;
+    while (*s >= '0' && *s <= '9') {
+        v = v * 10 + (uint32_t)(*s - '0');
+        s++;
+    }
+    return v;
 }

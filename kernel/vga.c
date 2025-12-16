@@ -88,3 +88,22 @@ void vga_println(const char* s) {
     vga_print(s);
     vga_putc('\n');
 }
+
+void vga_print_u64(uint64_t n) {
+    char buf[21];
+    int i = 0;
+
+    if (n == 0) {
+        vga_putc('0');
+        return;
+    }
+
+    while (n > 0 && i < 20) {
+        buf[i++] = (char)('0' + (n % 10));
+        n /= 10;
+    }
+
+    while (i > 0) {
+        vga_putc(buf[--i]);
+    }
+}
