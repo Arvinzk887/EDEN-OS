@@ -11,8 +11,11 @@ boot.o:
 kernel.o:
 	$(CC) $(CFLAGS) -c kernel/kernel.c -o kernel.o
 
-eden.bin: boot.o kernel.o
-	$(CC) $(LDFLAGS) boot.o kernel.o -o eden.bin
+vga.o:
+	$(CC) $(CFLAGS) -c kernel/vga.c -o vga.o
+
+eden.bin: boot.o kernel.o vga.o
+	$(CC) $(LDFLAGS) boot.o kernel.o vga.o -o eden.bin
 
 eden.iso: eden.bin grub.cfg
 	mkdir -p iso/boot/grub

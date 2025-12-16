@@ -1,11 +1,12 @@
-void kernel_main(void) {
-    const char* msg = "EDEN OS - Genesis Phase (Multiboot)\n";
-    volatile unsigned char* vga = (unsigned char*)0xB8000;
+#include "vga.h"
 
-    for (int i = 0; msg[i] != '\0'; i++) {
-        vga[i * 2] = (unsigned char)msg[i];
-        vga[i * 2 + 1] = 0x0F;
-    }
+void kernel_main(void) {
+    vga_clear();
+    vga_println("EDEN OS - Genesis Phase (Multiboot)");
+    vga_println("-----------------------------------");
+    vga_println("Console online.");
+    vga_println("");
+    vga_println("Next: keyboard input.");
 
     while (1) {}
 }
