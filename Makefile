@@ -14,8 +14,8 @@ kernel.o:
 vga.o:
 	$(CC) $(CFLAGS) -c kernel/vga.c -o vga.o
 
-eden.bin: boot.o kernel.o vga.o keyboard.o str.o shell.o gdt.o gdt_asm.o idt.o isr.o pic.o interrupts.o power.o pit.o sched.o bg.o sched_asm.o
-	$(CC) $(LDFLAGS) boot.o kernel.o vga.o keyboard.o str.o shell.o gdt.o gdt_asm.o idt.o isr.o pic.o interrupts.o power.o pit.o sched.o bg.o sched_asm.o -o eden.bin
+eden.bin: boot.o kernel.o vga.o keyboard.o str.o shell.o gdt.o gdt_asm.o idt.o isr.o pic.o interrupts.o power.o pit.o sched.o sched_asm.o bg.o uart.o
+	$(CC) $(LDFLAGS) boot.o kernel.o vga.o keyboard.o str.o shell.o gdt.o gdt_asm.o idt.o isr.o pic.o interrupts.o power.o pit.o sched.o sched_asm.o bg.o uart.o -o eden.bin
 
 eden.iso: eden.bin grub.cfg
 	mkdir -p iso/boot/grub
@@ -24,7 +24,7 @@ eden.iso: eden.bin grub.cfg
 	i686-elf-grub-mkrescue -o eden.iso iso
 
 run:
-	qemu-system-i386 -cdrom eden.iso -device isa-debug-exit,iobase=0xf4,iosize=0x04
+	qemu-system-i386 -cdrom eden.iso -device isa-debug-exit,iobase=0xf4,iosize=0x04 -no-reboot -no-shutdown
 
 clean:
 	rm -rf *.o eden.bin iso eden.iso
@@ -70,3 +70,6 @@ bg.o:
 
 sched_asm.o:
 	$(AS) -f elf32 kernel/sched_asm.asm -o sched_asm.o
+
+uart.o:
+	$(CC) $(CFLAGS) -c kernel/uart.c -o uart.o

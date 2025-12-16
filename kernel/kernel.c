@@ -8,6 +8,7 @@
 #include "vga.h"
 #include "pit.h"
 #include "sched.h"
+#include "uart.h"
 
 extern void bg_task(void);
 
@@ -40,6 +41,10 @@ void kernel_main(void) {
     vga_println("Console online.");
     vga_println("Interrupts online.");
     vga_println("Scheduler online.");
+
+    uart_init();
+    uart_print("UART online.");
+
 
     __asm__ volatile ("sti");  // enable interrupts AFTER tasks exist
 

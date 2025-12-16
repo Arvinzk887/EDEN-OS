@@ -1,2 +1,2 @@
 #pragma once
-void poweroff(void);
+__attribute__((noreturn)) void poweroff(void);

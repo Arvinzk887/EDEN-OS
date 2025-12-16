@@ -45,7 +45,7 @@ irq_common_stub:
     mov ax, ds
     push eax            ; ds (uint32_t)
 
-    mov ax, 0x10
+    mov ax, 0x10        ; kernel data selector
     mov ds, ax
     mov es, ax
     mov fs, ax
@@ -55,16 +55,14 @@ irq_common_stub:
     call irq_handler
     add esp, 4
 
-    mov esp, eax        ; <-- IMPORTANT: switch to returned stack frame
+    ; IMPORTANT: irq_handler returns the ESP we should resume (for scheduler)
+    mov esp, eax
 
-    pop eax
+    pop eax             ; restore ds
     mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
 
     popa
-    add esp, 8
+    add esp, 8          ; int_no + err_code
     iretd
 
 ; -------------------------
@@ -119,7 +117,7 @@ isr_common_stub:
 
     xor eax, eax
     mov ax, ds
-    push eax
+    push eax            ; ds (uint32_t)
 
     mov ax, 0x10
     mov ds, ax
@@ -128,16 +126,11 @@ isr_common_stub:
     mov gs, ax
 
     push esp
-    call isr_handler
+    call isr_handler     ; IMPORTANT: exceptions call isr_handler, not irq_handler
     add esp, 4
-
-    mov esp, eax        ; consistent design: handler returns ESP
 
     pop eax
     mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
 
     popa
     add esp, 8
