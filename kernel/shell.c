@@ -2,6 +2,7 @@
 #include "vga.h"
 #include "keyboard.h"
 #include "str.h"
+#include "power.h"
 
 #define LINE_MAX 80
 
@@ -27,10 +28,10 @@ static void exec_cmd(const char* line) {
     }
 
     if (kstreq(line, "halt")) {
-        vga_println("Halting...");
-        __asm__ volatile ("cli; hlt");
+        vga_println("Powering off...");
+        poweroff();   // exits QEMU when isa-debug-exit is enabled
         return;
-    }
+    }    
 
     if (kstartswith(line, "echo ")) {
         vga_println(line + 5);

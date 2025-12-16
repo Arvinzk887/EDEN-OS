@@ -14,8 +14,8 @@ kernel.o:
 vga.o:
 	$(CC) $(CFLAGS) -c kernel/vga.c -o vga.o
 
-eden.bin: boot.o kernel.o vga.o keyboard.o str.o shell.o gdt.o gdt_asm.o idt.o isr.o pic.o interrupts.o
-	$(CC) $(LDFLAGS) boot.o kernel.o vga.o keyboard.o str.o shell.o gdt.o gdt_asm.o idt.o isr.o pic.o interrupts.o -o eden.bin
+eden.bin: boot.o kernel.o vga.o keyboard.o str.o shell.o gdt.o gdt_asm.o idt.o isr.o pic.o interrupts.o power.o
+	$(CC) $(LDFLAGS) boot.o kernel.o vga.o keyboard.o str.o shell.o gdt.o gdt_asm.o idt.o isr.o pic.o interrupts.o power.o -o eden.bin
 
 eden.iso: eden.bin grub.cfg
 	mkdir -p iso/boot/grub
@@ -24,13 +24,10 @@ eden.iso: eden.bin grub.cfg
 	i686-elf-grub-mkrescue -o eden.iso iso
 
 run:
-	qemu-system-i386 -cdrom eden.iso
+	qemu-system-i386 -cdrom eden.iso -device isa-debug-exit,iobase=0xf4,iosize=0x04
 
 clean:
 	rm -rf *.o eden.bin iso eden.iso
-
-io.o:
-	$(CC) $(CFLAGS) -c kernel/io.h -o io.o
 
 keyboard.o:
 	$(CC) $(CFLAGS) -c kernel/keyboard.c -o keyboard.o
@@ -58,3 +55,6 @@ gdt.o:
 
 gdt_asm.o:
 	$(AS) -f elf32 kernel/gdt.asm -o gdt_asm.o
+
+power.o:
+	$(CC) $(CFLAGS) -c kernel/power.c -o power.o
