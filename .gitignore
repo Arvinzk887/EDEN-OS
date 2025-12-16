@@ -1,0 +1,6 @@
+cat <<EOF > .gitignore
+*.o
+*.bin
+*.iso
+iso/
+EOF
